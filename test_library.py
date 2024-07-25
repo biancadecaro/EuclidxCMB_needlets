@@ -60,21 +60,24 @@ Mll_comb  = np.loadtxt('kernel_Euclid_Planck_TGTG_lmax256.dat')
 gammaJ_tg = need_theory.gammaJ(cl_theory_tg, Mll_pl_eu, lmax)
 delta_gammaj = need_theory.variance_gammaj(cltg=cl_theory_tg,cltt=cl_theory_tt, clgg=cl_theory_gg, Mll_1x2=Mll_comb, Mll=Mll_pl_eu,  lmax=lmax, noise_gal_l=Nll)
 
+gammaj_TG_sims = np.loadtxt('gamma_sims_TS_galT_jmax12_B_1.59_nside128_fsky0.36.dat')
+gammaj_TG_sims_mean = np.mean(gammaj_TG_sims, axis=0)
+
+cov_gammaj_TG_sims = np.loadtxt('cov_TS_galT_jmax12_B_1.59_nside128_fsky0.36.dat')
+
 # Covariances
 
 fig = plt.figure()
-
 plt.suptitle(r'$D = %1.2f $' %D +r'$ ,~j_{\mathrm{max}} =$'+str(jmax) + r'$ ,~\ell_{\mathrm{max}} =$'+str(lmax) + r'$ ,~N_{\mathrm{side}} =$'+str(nside) + r',$~N_{\mathrm{sim}} = $'+str(nsim))
-
 ax = fig.add_subplot(1, 1, 1)
 
-ax.plot(jvec[1:jmax], np.diag(delta_gammaj)[1:jmax], 'o')
-
+ax.plot(jvec[1:jmax], (np.diag(cov_gammaj_TG_sims)[1:jmax]/np.diag(delta_gammaj)[1:jmax]-1)*100 ,'o')
+ax.axhline(ls='--', color='grey')
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 ax.set_xticks(jvec[1:jmax])
 ax.set_xticklabels(jvec[1:jmax])
 ax.set_xlabel(r'$j$')
-ax.set_ylabel(r'$(\Gamma_j)^2$')
+ax.set_ylabel(r'% $(\Delta \Gamma)^2_{\mathrm{sims}}/(\Delta \Gamma)^2_{\mathrm{analytic}}$ - 1')
 
 fig.tight_layout()
 
@@ -82,13 +85,13 @@ fig.tight_layout()
 # GammaJ TG
 
 fig = plt.figure()
-
 plt.suptitle(r'$D = %1.2f $' %D +r'$ ,~j_{\mathrm{max}} =$'+str(jmax) + r'$ ,~\ell_{\mathrm{max}} =$'+str(lmax) + r'$ ,~N_{\mathrm{side}} =$'+str(nside) + r',$~N_{\mathrm{sim}} = $'+str(nsim))
-
 ax = fig.add_subplot(1, 1, 1)
+ax.plot(jvec[1:], gammaJ_tg[1:], label='Theory')
+ax.errorbar(jvec[1:jmax], gammaj_TG_sims_mean[1:jmax], yerr=np.sqrt(np.diag(cov_gammaj_TG_sims)[1:jmax])/np.sqrt(nsim) ,fmt='o',ms=3, label='Error of the mean of the simulations')
+ax.errorbar(jvec[1:jmax], gammaj_TG_sims_mean[1:jmax], yerr=np.sqrt(np.diag(cov_gammaj_TG_sims)[1:jmax]) ,color='grey',fmt='o',ms=0, label='Error of simulations')
 
-ax.plot(jvec[1:jmax], gammaJ_tg[1:jmax], 'o')
-
+ax.legend(loc='best')
 plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 ax.set_xticks(jvec[1:jmax])
 ax.set_xticklabels(jvec[1:jmax])

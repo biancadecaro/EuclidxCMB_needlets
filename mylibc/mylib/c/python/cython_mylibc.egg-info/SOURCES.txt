@@ -1,0 +1,6 @@
+cython_mylibc.pyx
+setup.py
+cython_mylibc.egg-info/PKG-INFO
+cython_mylibc.egg-info/SOURCES.txt
+cython_mylibc.egg-info/dependency_links.txt
+cython_mylibc.egg-info/top_level.txt

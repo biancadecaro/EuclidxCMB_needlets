@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import healpy as hp
-import needlets_analysis as need
+import needlets_analysis_c as need
 import seaborn as sns
 ###################################
 
@@ -60,6 +60,9 @@ Mll_comb  = np.loadtxt('kernel_Euclid_Planck_TGTG_lmax256.dat')
 gammaJ_tg = need_theory.gammaJ(cl_theory_tg, Mll_pl_eu, lmax)
 delta_gammaj = need_theory.variance_gammaj(cltg=cl_theory_tg,cltt=cl_theory_tt, clgg=cl_theory_gg, Mll_1x2=Mll_comb, Mll=Mll_pl_eu,  lmax=lmax, noise_gal_l=Nll)
 
+np.savetxt(f'gammaj_tg_jmax12_lmax256.dat',gammaJ_tg )
+np.savetxt(f'cov_gammaj_tg_jmax12_lmax256.dat',delta_gammaj )
+
 gammaj_TG_sims = np.loadtxt('gamma_sims_TS_galT_jmax12_B_1.59_nside128_fsky0.36.dat')
 gammaj_TG_sims_mean = np.mean(gammaj_TG_sims, axis=0)
 
@@ -81,6 +84,20 @@ ax.set_ylabel(r'% $(\Delta \Gamma)^2_{\mathrm{sims}}/(\Delta \Gamma)^2_{\mathrm{
 
 fig.tight_layout()
 
+
+fig = plt.figure()
+plt.suptitle(r'$D = %1.2f $' %D +r'$ ,~j_{\mathrm{max}} =$'+str(jmax) + r'$ ,~\ell_{\mathrm{max}} =$'+str(lmax) + r'$ ,~N_{\mathrm{side}} =$'+str(nside) + r',$~N_{\mathrm{sim}} = $'+str(nsim))
+ax = fig.add_subplot(1, 1, 1)
+
+ax.plot(jvec[1:jmax], (np.sqrt(np.diag(cov_gammaj_TG_sims))[1:jmax]/np.sqrt(np.diag(delta_gammaj))[1:jmax]-1)*100 ,'o')
+ax.axhline(ls='--', color='grey')
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+ax.set_xticks(jvec[1:jmax])
+ax.set_xticklabels(jvec[1:jmax])
+ax.set_xlabel(r'$j$')
+ax.set_ylabel(r'% $\sigma_{\mathrm{sims}}/\sigma_{\mathrm{analytic}}$ - 1')
+
+fig.tight_layout()
 
 # GammaJ TG
 

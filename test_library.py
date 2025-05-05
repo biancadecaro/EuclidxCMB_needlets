@@ -56,8 +56,8 @@ plt.tight_layout()
 Mll_pl_eu  = np.loadtxt('kernel_Euclid_Planck_TTGG_lmax256.dat')
 Mll_comb  = np.loadtxt('kernel_Euclid_Planck_TGTG_lmax256.dat')
 
-
 gammaJ_tg = need_theory.gammaJ(cl_theory_tg, Mll_pl_eu, lmax)
+
 delta_gammaj = need_theory.variance_gammaj(cltg=cl_theory_tg,cltt=cl_theory_tt, clgg=cl_theory_gg, Mll_1x2=Mll_comb, Mll=Mll_pl_eu,  lmax=lmax, noise_gal_l=Nll)
 
 np.savetxt(f'gammaj_tg_analytic_jmax12_lmax256.dat',gammaJ_tg )
